@@ -35,7 +35,10 @@ def _marshal(obj, tab_count, with_indent):
             else:
                 if type(v)!=str:
                     cybuf_str += marshal_sep
+        if with_indent:
             cybuf_str += tabs[1:]
+        if cybuf_str.endswith(marshal_sep):
+            cybuf_str = cybuf_str[: len(cybuf_str) - len(marshal_sep)]
         cybuf_str += "}"
     return cybuf_str
 
