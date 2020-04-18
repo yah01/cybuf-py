@@ -1,23 +1,26 @@
-defaultEncoding="utf-8"
+defaultEncoding = "utf-8"
+MarshalSep = b" "
 
-def dumps(obj):
-    marshal(obj)
+def dumps(obj, tabCount, withIndent=False):
+    marshal(obj, tabCount, withIndent=False)
 
-def marshal(obj):
-    cybufBytes = b"{\n"
-    cybufBytes += _marshal(obj,1)
-    cybufBytes += b"}"
-    return cybufBytes
 
-def _marshal(obj, tabCount):
-    cybufBytes = b""
-    tabsBytes = b"\t" * tabCount
-    if (type(obj) == dict):
+def marshal(obj, tabCount, withIndent=False):
+    cybufBytes = b"{"
+    if withIndent:
+        cybufBytes += b"\n"
+    tabs = b""
+    if withIndent:
+        tabs = b"\t" * tabCount
+        
+    if type(obj) == dict:
         for (k, v) in obj.items():
-            cybufBytes += tabsBytes
+            cybufBytes += tabs
             cybufBytes += bytes(str(k),defaultEncoding)
-            cybufBytes += b":" + b" "
-
+            cybufBytes += b":"
+            if withIndent:
+                cybufBytes += b" "
+                
             valueBytes = b""
             if type(v) == int:
                 valueBytes = bytes(str(v),defaultEncoding)
@@ -30,8 +33,15 @@ def _marshal(obj, tabCount):
             elif type(v) == str:
                 valueBytes += b"\"" + bytes(v,defaultEncoding) + b"\""
             cybufBytes += valueBytes
-            cybufBytes += b"\n"
+            if withIndent:
+                cybufBytes += b"\n"
+            else:
+                if(type(v)!=str):
+                    cybufBytes += MarshalSep
+        cybufBytes += tabs[1:]
+        cybufBytes += b"}"
     return cybufBytes
 
 if __name__ == "__main__":
-    print(marshal({"hello":1,"this":2,"key":"this"}).decode(defaultEncoding))
+    print(marshal({"hello":1,"this":2,"key":"this"},1,True).decode(defaultEncoding))
+    print(marshal({"hello":1,"this":2,"key":"this"},1).decode(defaultEncoding))
