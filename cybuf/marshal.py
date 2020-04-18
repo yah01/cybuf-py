@@ -23,7 +23,7 @@ def _marshal(obj, tab_count, with_indent):
                 value_str = str(v)
             elif type(v) == float:
                 value_str = str(v)
-            elif type(v) == None:
+            elif v is None:
                 value_str += "nil"
             elif type(v) == bool:
                 value_str += str(v)
